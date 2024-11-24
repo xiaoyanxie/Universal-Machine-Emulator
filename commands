@@ -3,9 +3,9 @@ ssh utln@lab[room][computer letter].cs.tufts.edu
 w
 
 Timing:
-/usr/bin/time ./um umbin/sandmark.umz > /dev/null
 /usr/bin/time ./um umbin/midmark.um > /dev/null
 /usr/bin/time ./um umbin/advent.umz < advent > /dev/null
+/usr/bin/time ./um umbin/sandmark.umz > /dev/null
 
 Instructions (for small inputs)
 valgrind --tool=callgrind --dump-instr=yes ./um umbin/midmark.um > /dev/null

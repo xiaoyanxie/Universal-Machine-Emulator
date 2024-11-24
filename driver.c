@@ -76,27 +76,6 @@ int main(int argc, char *argv[])
 }
 
 
-/********** open_and_read ********
- *
- * Opens a file, reads its contents, and stores the data in segment 0 of memory.
- *
- * Parameters:
- *      char *file_name:    Name of the file to open and read.
- *      T memory:           Pointer to the memory struct.
- *      uint32_t file_size: Size of the file in words (each word is 4 bytes).
- *
- * Return:
- *      void
- *
- * Expects:
- *      file_name refers to a valid file.
- *      memory struct is not NULL.
- *      Each word is 4 bytes.
- *
- * Notes:
- *      Will CRE is memory struct is NULL.
- *      Exits the program with EXIT_FAILURE if the file cannot be opened.
- ************************/
 void open_and_read(char *file_name, T memory, uint32_t file_size)
 {
         assert(memory != NULL);
@@ -123,3 +102,4 @@ void open_and_read(char *file_name, T memory, uint32_t file_size)
 
         fclose(file);
 }
+

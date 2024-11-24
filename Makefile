@@ -1,24 +1,24 @@
 #
 # Makefile for the UM Homework
 # 
-CC = gcc
+CC = gcc -O2
 
-LDLIBS  = -lbitpack -l40locality -lcii40 -lm
+LDLIBS  = -lcii40-O2 -lbitpack -l40locality -lm
 IFLAGS  = -I/comp/40/build/include -I/usr/sup/cii40/include/cii
-CFLAGS  = -g -std=gnu99 -Wall -Wextra -Werror -pedantic $(IFLAGS)
+CFLAGS  = -g -std=gnu99 -Wall -Wextra -Werror -pedantic $(IFLAGS) 
 LDFLAGS = -g -L/comp/40/build/lib -L/usr/sup/cii40/lib64
 
-EXECS   = writetests um
+EXECS   = um
 
 all: $(EXECS)
 
-um: driver.o instructions.o memory.o bitpack.o
+um: instructions.o
 	$(CC) $(LDFLAGS) $^ -o $@ $(LDLIBS)
 
-writetests: umlabwrite.o umlab.o
-	$(CC) $(LDFLAGS) $^ -o $@ $(LDLIBS)
+# writetests: umlabwrite.o umlab.o
+# 	$(CC) $(LDFLAGS) $^ -o $@ $(LDLIBS)
 
-test: test.o instructions.o memory.o bitpack.o
+# test: test.o instructions.o memory.o bitpack.o
 # To get *any* .o file, compile its .c file with the following rule.
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
