@@ -17,4 +17,4 @@ valgrind --tool=callgrind --dump-instr=yes ./um umbin/midmark.um > /dev/null
 valgrind --tool=callgrind --dump-instr=yes ./um umbin/advent.umz < advent > /dev/null
 
 ls -lt callgrind.out.*
-qcachegrind callgrind.out.[pid]
+qcachegrind callgrind.out.3277383
