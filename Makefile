@@ -18,7 +18,7 @@ um: instructions.o
 # writetests: umlabwrite.o umlab.o
 # 	$(CC) $(LDFLAGS) $^ -o $@ $(LDLIBS)
 
-# test: test.o instructions.o memory.o bitpack.o
+test: test.o
 # To get *any* .o file, compile its .c file with the following rule.
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@

@@ -22,6 +22,7 @@
 #include <stdbool.h>
 
 typedef struct T *T;
+typedef struct A A;
 
 /********** Function Declarations ********/
 
@@ -30,23 +31,40 @@ static inline uint32_t get_opcode(uint32_t word);
 
 
 /* Memory Functions */
-static inline T init_memory(uint32_t element_size, uint32_t segment_size,
-                            uint32_t file_size);
+// static inline T init_memory(uint32_t element_size, uint32_t segment_size,
+//                             uint32_t file_size);
 static inline void free_memory(T mem);
 static inline uint32_t seg_new(T mem, uint32_t element_size, uint32_t segment_size);
 static inline void seg_free(T mem, uint32_t id);
 static inline uint32_t seg_at(T mem, uint32_t id, uint32_t offset);
 static inline void seg_copy(T mem, uint32_t id);
 static inline void seg_store(T mem, uint32_t id, uint32_t offset, uint32_t word);
-static inline uint32_t seg_size(T mem, uint32_t id);
-static inline uint32_t get_id(T mem);
+// static inline uint32_t seg_size(T mem, uint32_t id);
+// static inline uint32_t get_id(T mem);
 
-static inline void instructions_driver(T mem);
+/* Array Functions */
+
+static inline void instructions_driver(A mem);
 
 struct T
 {
         Seq_T Segments_wrapper;
         Seq_T Unmapped_ID;
+};
+
+struct A
+{
+        uint32_t ele_size;
+        uint32_t mem_num_ele;
+        uint32_t unmap_num_ele;
+
+        uint32_t mem_length;
+        uint32_t unmap_length;
+        uint32_t seg_length;
+
+        uint32_t **mem_array;
+        uint32_t *unmap_array;
+        uint32_t *seg_0;
 };
 
 static inline uint32_t input();
@@ -57,7 +75,7 @@ static inline uint64_t Bitpack_getu(uint64_t word, unsigned width, unsigned lsb)
 static inline uint64_t Bitpack_newu(uint64_t word, unsigned width, unsigned lsb,
                                     uint64_t value);
 
-static inline void instructions_driver(T mem)
+static inline void instructions_driver(A mem)
 {
         /* initialize program counter */
         uint32_t counter = 0;
@@ -282,36 +300,47 @@ int main(int argc, char *argv[])
         /* retrieve infomation about the file using system call stat*/
         struct stat file_info;
         stat(file_name, &file_info);
-
-        /* obtain file size */
-        // assert(file_info.st_size % 4 == 0);
         int file_size = file_info.st_size / 4;
 
         /* intialize memory module */
-        T mem = init_memory(sizeof(uint32_t), file_size, 1);
-        // assert(mem != NULL);
+        A mem;
 
-        /* read file */
-        //open_and_read(file_name, mem, file_size);
+        mem.ele_size = sizeof(uint32_t);
+        mem.unmap_length = 400;
+        mem.mem_length = 2000;
+        mem.seg_length = file_size;
+        
+        uint32_t *unmapped_ID = calloc(mem.unmap_length, sizeof(uint32_t));
+        uint32_t **mem_wrapper = calloc(mem.mem_length, sizeof(uint32_t*));
+        uint32_t *segment = calloc(mem.seg_length, sizeof(uint32_t));
+
+        mem_wrapper[0] = segment;
+
+        mem.mem_array = mem_wrapper;
+        mem.unmap_array = unmapped_ID;
+        mem.seg_0 = segment;
+        mem.mem_num_ele = 1;
+        mem.unmap_num_ele = 0;
 
         /* open_and_read */
         FILE *file = fopen(file_name, "rb");
-        if (file == NULL)
-        {
+        if (file == NULL) {
                 fprintf(stderr, "%s: No such file or directory\n", file_name);
                 exit(EXIT_FAILURE);
         }
 
-        // assert(file_size > 0);
-        for (uint32_t i = 0; i < (uint32_t)file_size; i++)
-        {
+        for (uint32_t i = 0; i < (uint32_t)file_size; i++) {
                 uint32_t word = 0;
-                /* read 4 bytes (1 word) from the file */
-                for (int j = 0; j < 4; j++)
-                {
-                        int byte = fgetc(file);
-                        word = Bitpack_newu(word, 8, 24 - (j * 8), byte);
-                }
+                uint32_t byte;
+                byte = fgetc(file);
+                word |= byte << 24;
+                byte = fgetc(file);
+                word |= byte << 16;
+                byte = fgetc(file);
+                word |= byte << 8;
+                byte = fgetc(file);
+                word |= byte;
+
                 /* store word into segment 0 */
                 seg_store(mem, 0, i, word);
         }
@@ -327,92 +356,32 @@ int main(int argc, char *argv[])
         return EXIT_SUCCESS;
 }
 
-// static inline void open_and_read(char *file_name, T memory, uint32_t file_size)
-// {
-//         assert(memory != NULL);
 
-//         /* open and verify file */
-//         FILE *file = fopen(file_name, "rb");
-//         if (file == NULL)
-//         {
-//                 fprintf(stderr, "%s: No such file or directory\n", file_name);
-//                 exit(EXIT_FAILURE);
-//         }
-
-//         assert(file_size > 0);
-//         for (uint32_t i = 0; i < file_size; i++)
-//         {
-//                 uint32_t word = 0;
-//                 /* read 4 bytes (1 word) from the file */
-//                 for (int j = 0; j < 4; j++)
-//                 {
-//                         int byte = fgetc(file);
-//                         word = Bitpack_newu(word, 8, 24 - (j * 8), byte);
-//                 }
-//                 /* store word into segment 0 */
-//                 seg_store(memory, 0, i, word);
-//         }
-
-//         fclose(file);
-// }
-
-static inline T init_memory(uint32_t element_size, uint32_t segment_size,
-                            uint32_t num_segments)
+static inline uint32_t seg_new(A mem, uint32_t element_size, uint32_t segment_size)
 {
-        /* initialize memory struct */
-        T mem = malloc(sizeof(struct T));
-        // assert(mem != NULL);
+        uint32_t *segment = calloc(segment_size, element_size);
 
-        /*
-         * initialize sequence of unmapped id
-         * note: since sequence expands dynamically, the initial size of
-         * sequence could be other than 100.
-         */
-        Seq_T unmapped_ID = Seq_new(100);
-        // assert(unmapped_ID != NULL);
-
-        /* initialize sequence of segment wrapper */
-        Seq_T mem_wrapper = Seq_new(num_segments);
-        // assert(mem_wrapper != NULL);
-
-        /* initialize mapped segments, each as a UArray */
-        for (uint32_t i = 0; i < num_segments; i++)
+        /* get id */
+        uint32_t id;
+        if (mem.unmap_num_ele == 0)
         {
-                UArray_T segment = UArray_new(segment_size, element_size);
-                // assert(segment != NULL);
-
-                Seq_addhi(mem_wrapper, segment);
+                /*check mem array size*/
+                if (mem.mem_num_ele == mem.mem_length - 1) {
+                        uint32_t **new_mem_array = calloc(2 * mem.mem_length, sizeof(uint32_t *));
+                        free(mem.mem_array);
+                        mem.mem_array = new_mem_array;
+                        mem.mem_length *= 2;
+                }
+                
+                id = mem.mem_num_ele - 1;
+        } else {
+                id = (mem.unmap_array[mem.unmap_num_ele - 1]);
+                mem.unmap_num_ele--;
         }
 
-        /* return memory struct */
-        mem->Segments_wrapper = mem_wrapper;
-        mem->Unmapped_ID = unmapped_ID;
-        return mem;
-}
-
-
-static inline uint32_t seg_new(T mem, uint32_t element_size, uint32_t segment_size)
-{
-        // assert(mem != NULL);
-
-        UArray_T segment = UArray_new(segment_size, element_size);
-        // assert(segment != NULL);
-
-        /* get id for new segment */
-        uint32_t id = get_id(mem);
-
-        /* if no unused id left, assign it a new one */
-        if (id == 0)
-        {
-                Seq_addhi(mem->Segments_wrapper, segment);
-                id = Seq_length(mem->Segments_wrapper) - 1;
-                /* otherwise, reuse a previously used id */
-        }
-        else
-        {
-                Seq_put(mem->Segments_wrapper, id, segment);
-        }
-
+        mem.mem_array[id] = segment;
+        mem.mem_num_ele++;
+        
         return id;
 }
 
@@ -440,18 +409,6 @@ static inline void seg_store(T mem, uint32_t id, uint32_t offset, uint32_t word)
         // assert(segment != NULL);
 
         *(uint32_t *)UArray_at(segment, offset) = word;
-}
-
-
-static inline uint32_t seg_size(T mem, uint32_t id)
-{
-        // assert(mem != NULL);
-
-        UArray_T segment = Seq_get(mem->Segments_wrapper, id);
-        // assert(segment != NULL);
-
-        uint32_t size = UArray_length(segment);
-        return size;
 }
 
 
@@ -534,37 +491,11 @@ static inline void free_memory(T mem)
 }
 
 
-static inline uint32_t get_id(T mem)
+static inline uint64_t Bitpack_getu(uint64_t word, unsigned width, unsigned lsb) 
 {
-        // assert(mem != NULL);
-        // assert(mem->Unmapped_ID != NULL);
-
-        /* return 0 if sequence of unused id is empty */
-        if (Seq_length(mem->Unmapped_ID) == 0)
-        {
-                return 0;
-        }
-
-        /* otherwise, obtain an id from sequence then removes it from seq */
-        uint32_t used_id = (uint32_t)(uintptr_t)Seq_remhi(mem->Unmapped_ID);
-        return used_id;
-}
-
-static inline uint64_t Bitpack_getu(uint64_t word, unsigned width, unsigned lsb) {
-        // assert(width <= 64);
-        // unsigned hi = lsb + width; 
-
-        // if (hi == 64) {
-        //         return (word << (64 - hi)) >> (64 - width);
-        // } else {
-        //         return (word << (64 - hi)) >> (64 - width);
-        // }
         uint64_t mask = ~0;
         uint64_t new_mask = mask >> (64 - width) << lsb;
         return ((word & new_mask) >> lsb);
-
-
-
 }
 
 static inline uint64_t Bitpack_newu(uint64_t word, unsigned width, unsigned lsb, uint64_t value) {
