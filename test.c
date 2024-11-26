@@ -4,17 +4,9 @@
 #include <stdint.h>
 //#include "memory.h"
 #include "instructions.h"
-#include "seq.h"
-#include "uarray.h"
-
-// void test_init_mem();
-// void test_get_id();
-// void test_seg_new();
-// void test_seg_free();
-// void test_seg_at_store();
-// void test_seg_size();
-// void test_seg_copy();
-// void test_init_instructions();
+// #include "seq.h"
+// #include "uarray.h"
+#include <string.h>
 
 typedef struct A A;
 
@@ -55,7 +47,7 @@ int main()
         uint32_t **mem_wrapper = calloc(mem.mem_length, sizeof(uint32_t *));
         assert(mem_wrapper != NULL);
  
-        uint32_t *segment = calloc(mem.seg_length, sizeof(uint32_t));
+        uint32_t *segment = calloc(file_size + 1, sizeof(uint32_t));
         // printf("segment length is %lu\n", sizeof(segment) / sizeof(segment[0]));
         assert(segment != NULL);
         // for (uint32_t i = 0; i < mem.seg_length; i++) {
@@ -63,6 +55,7 @@ int main()
         //         printf(" %d : %u\n", i, segment[i]);
         // }
         mem_wrapper[0] = segment;
+        segment[0] = file_size;
 
         mem.mem_array = mem_wrapper;
         mem.unmap_array = unmapped_ID;
@@ -71,11 +64,12 @@ int main()
         mem.unmap_num_ele = 2;
         mem.unmap_array[0] = 3;
         mem.unmap_array[1] = 8;
-
+        
+        // mem.mem_array[8][0] = 8;
 
         //print_struct(mem);
         printf("-----test_seg_new-----\n");
-        segment = calloc(mem.seg_length, mem.ele_size);
+        segment = calloc(mem.seg_length + 1, mem.ele_size);
         assert(segment != NULL);
 
         /* get id */
@@ -83,11 +77,18 @@ int main()
         if (mem.unmap_num_ele == 0)
         {
                 /*check mem array size*/
-                if (mem.mem_num_ele == mem.mem_length - 1) {
+                if (mem.mem_num_ele == mem.mem_length) {
                         uint32_t **new_mem_array = calloc(2 * mem.mem_length, sizeof(uint32_t *));
-                        free(mem.mem_array);
+                        assert(new_mem_array != NULL);
                         mem.mem_array = new_mem_array;
                         mem.mem_length *= 2;
+                        
+                        uint32_t size = mem.mem_length;
+                        for (uint32_t i = 0; i < size; i++) {
+                                new_mem_array[i] = mem.mem_array[i];
+                        }
+                        free(mem.mem_array);
+                        mem.mem_array = new_mem_array;
                 }
                 
                 id = mem.mem_num_ele - 1;
@@ -97,9 +98,103 @@ int main()
         }
 
         mem.mem_array[id] = segment;
+        segment[0] = mem.seg_length;
+        // for (uint32_t i = 1; i < mem.seg_length; i++) {
+        //         segment[i] = 0;
+        // }
         mem.mem_num_ele++;
         printf("id is %u\n", id);
         printf("mem.mem_num_ele is %u\n", mem.mem_num_ele);
+
+        printf("-----test_seg_at-----\n");
+        uint32_t id_at = 0;
+        uint32_t offset_at = 0;
+        uint32_t instruction = mem.mem_array[id_at][offset_at + 1];
+        printf("instruction at id %u offset %u is %u\n", id_at, offset_at, instruction);
+
+        printf("-----test_seg_store_at-----\n");
+        uint32_t word_store = 23;
+        uint32_t id_store = 8;
+        uint32_t offset_store = 1;
+        /* store instruction */
+        mem.mem_array[id_store][offset_store + 1] = word_store;
+        /* get instruction */
+        instruction = mem.mem_array[id_store][offset_store + 1];
+        /* print store and get values */
+        printf("instruction at id %u offset %u is %u, ", id_store, offset_store, instruction);
+        printf("should be %u\n", word_store);
+        
+        printf("-----test_copy-----\n");
+        uint32_t id_copy = 8;
+        uint32_t *old_array = mem.mem_array[id_copy];
+        assert(old_array != NULL);
+        printf("before copy, size of segment being copied is %u and stores %u in index 2\n", mem.mem_array[id_copy][0], mem.mem_array[id_copy][2]);
+
+        uint32_t length = mem.mem_array[id_copy][0];
+        printf("test within function: the length of old array is %u\n", length);
+
+        uint32_t *new_array = calloc(length + 1, sizeof(uint32_t));
+        assert(new_array != NULL);
+        memcpy(new_array, old_array, (length + 1) * sizeof(uint32_t));
+        /* free original segment 0 */
+        uint32_t *seg0 = mem.mem_array[0];
+        if (seg0 != NULL) {
+                free(seg0); 
+        }
+        /* put in new segment 0 */
+        mem.mem_array[0] = new_array;
+        printf("after copy, size of segment 0 is %u and should store 23 = %u in index 2\n", mem.mem_array[0][0], mem.mem_array[0][2]);
+        printf("and size of segment being copied is %u\n", mem.mem_array[id_copy][0]);
+        
+        printf("-----test_seg_free-----\n");
+        printf("before free mem_num_ele is %u, unmap_num_ele is %u\n", mem.mem_num_ele, mem.unmap_num_ele);
+        uint32_t id_free = 8;
+
+        segment = mem.mem_array[id_free];
+        mem.mem_array[id_free] = NULL;
+        if (segment != NULL) {
+                free(segment);
+        }
+
+        /* recycle id */
+        if (mem.unmap_num_ele == mem.unmap_length) {
+                uint32_t *new_unmap_array = calloc(2 * mem.unmap_length, sizeof(uint32_t));
+                assert(new_unmap_array != NULL);
+                mem.unmap_array = new_unmap_array;
+                mem.unmap_length *= 2;
+                
+                uint32_t size = mem.unmap_length;
+                for (uint32_t i = 0; i < size; i++) {
+                        new_unmap_array[i] = mem.unmap_array[i];
+                }
+                free(mem.unmap_array);
+                mem.unmap_array = new_unmap_array;
+        }
+        mem.unmap_array[mem.unmap_num_ele] = id_free;
+        mem.unmap_num_ele++;
+        mem.mem_num_ele--;
+        if (mem.mem_array[8] == NULL) {
+                printf("successfully freed seg8\n");
+        }
+
+        printf("after free mem_num_ele is %u, unmap_num_ele is %u\n", mem.mem_num_ele, mem.unmap_num_ele);
+        
+        printf("-----test_free_memory-----\n");
+        uint32_t size_free = mem.mem_length;
+        for (uint32_t i = 0; i < size_free; i++) {
+                uint32_t *segment = mem.mem_array[i];
+                if (segment != NULL) {
+                        free(segment);
+                }
+        }
+
+        /* freeing array of unmapped id */
+        if (mem.unmap_array != NULL) {
+                free(mem.unmap_array);
+        }
+
+        /* freeing memory array */
+        free(mem.mem_array);
         
         printf("-----all tests complete-----\n");
 }

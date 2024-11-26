@@ -17,11 +17,11 @@
 #include <assert.h>
 #include <stdint.h>
 #include <sys/stat.h>
+#include <string.h>
+#include <stdbool.h>
 #include "seq.h"
 #include "uarray.h"
-#include <stdbool.h>
 
-typedef struct T *T;
 typedef struct A A;
 
 /********** Function Declarations ********/
@@ -33,12 +33,12 @@ static inline uint32_t get_opcode(uint32_t word);
 /* Memory Functions */
 // static inline T init_memory(uint32_t element_size, uint32_t segment_size,
 //                             uint32_t file_size);
-static inline void free_memory(T mem);
-static inline uint32_t seg_new(T mem, uint32_t element_size, uint32_t segment_size);
-static inline void seg_free(T mem, uint32_t id);
-static inline uint32_t seg_at(T mem, uint32_t id, uint32_t offset);
-static inline void seg_copy(T mem, uint32_t id);
-static inline void seg_store(T mem, uint32_t id, uint32_t offset, uint32_t word);
+static inline void free_memory(A mem);
+static inline uint32_t seg_new(A mem, uint32_t element_size, uint32_t segment_size);
+static inline void seg_free(A mem, uint32_t id);
+static inline uint32_t seg_at(A mem, uint32_t id, uint32_t offset);
+static inline void seg_copy(A mem, uint32_t id);
+static inline void seg_store(A mem, uint32_t id, uint32_t offset, uint32_t word);
 // static inline uint32_t seg_size(T mem, uint32_t id);
 // static inline uint32_t get_id(T mem);
 
@@ -46,25 +46,17 @@ static inline void seg_store(T mem, uint32_t id, uint32_t offset, uint32_t word)
 
 static inline void instructions_driver(A mem);
 
-struct T
-{
-        Seq_T Segments_wrapper;
-        Seq_T Unmapped_ID;
-};
-
 struct A
 {
-        uint32_t ele_size;
-        uint32_t mem_num_ele;
-        uint32_t unmap_num_ele;
+        uint32_t ele_size; /* size of element = 4 */
+        uint32_t mem_num_ele; /* number of segments present? */
+        uint32_t unmap_num_ele; /* number of unmapped ids present */
 
-        uint32_t mem_length;
-        uint32_t unmap_length;
-        uint32_t seg_length;
+        uint32_t mem_length; /* initialized number of segments */
+        uint32_t unmap_length; /* initialized number of unmapped ids in unmap array */
 
-        uint32_t **mem_array;
-        uint32_t *unmap_array;
-        uint32_t *seg_0;
+        uint32_t **mem_array; /* array of segments of instructions */
+        uint32_t *unmap_array; /* unmapped ids */
 };
 
 static inline uint32_t input();
@@ -78,16 +70,16 @@ static inline uint64_t Bitpack_newu(uint64_t word, unsigned width, unsigned lsb,
 static inline void instructions_driver(A mem)
 {
         /* initialize program counter */
-        uint32_t counter = 0;
+        uint32_t counter = 1;
 
         /* initialize all registers to 0 */
         uint32_t regi[8] = {0, 0, 0, 0, 0, 0, 0, 0};
 
         /* get first word */
-        uint32_t word = seg_at(mem, 0, counter);
+        uint32_t word = mem.mem_array[0][counter];
 
         uint32_t instr = get_opcode(word);
-        uint32_t size = seg_size(mem, 0);
+        uint32_t size = mem.mem_array[0][0];
         /* go though all instructions */
         while ((instr != 7))
         {
@@ -200,8 +192,9 @@ static inline void instructions_driver(A mem)
                         {
                                 seg_copy(mem, regi[reg_b]);
                         }
-                        counter = regi[reg_c] - 1; 
-                        size = seg_size(mem, regi[reg_b]);
+                        counter = regi[reg_c]; 
+                        //size = seg_size(mem, regi[reg_b]);
+                        size = mem.mem_array[0][0];
                         break;
                 }
 
@@ -213,20 +206,16 @@ static inline void instructions_driver(A mem)
                 }
                 case 7:
                         break;
-                        // default:
-                        //         fprintf(stderr, "Unknown opcode: %u\n", instr);
-                        //         exit(1);
                 }
 
                 /* get next instruction */
                 counter++;
-                /* seg_size */
-                // size = seg_size(mem, 0);
-                if (counter >= size)
+
+                if (counter > size)
                 {
                         break;
                 }
-                word = seg_at(mem, 0, counter);
+                word = mem.mem_array[0][counter];
                 instr = get_opcode(word);
         }
 }
@@ -308,17 +297,19 @@ int main(int argc, char *argv[])
         mem.ele_size = sizeof(uint32_t);
         mem.unmap_length = 400;
         mem.mem_length = 2000;
-        mem.seg_length = file_size;
         
         uint32_t *unmapped_ID = calloc(mem.unmap_length, sizeof(uint32_t));
+        assert(unmapped_ID != NULL);
         uint32_t **mem_wrapper = calloc(mem.mem_length, sizeof(uint32_t*));
-        uint32_t *segment = calloc(mem.seg_length, sizeof(uint32_t));
+        assert(mem_wrapper != NULL);
+        uint32_t *segment = calloc(file_size + 1, sizeof(uint32_t));
+        assert(segment != NULL);
 
         mem_wrapper[0] = segment;
+        segment[0] = file_size;
 
         mem.mem_array = mem_wrapper;
         mem.unmap_array = unmapped_ID;
-        mem.seg_0 = segment;
         mem.mem_num_ele = 1;
         mem.unmap_num_ele = 0;
 
@@ -356,21 +347,28 @@ int main(int argc, char *argv[])
         return EXIT_SUCCESS;
 }
 
-
 static inline uint32_t seg_new(A mem, uint32_t element_size, uint32_t segment_size)
 {
-        uint32_t *segment = calloc(segment_size, element_size);
+        uint32_t *segment = calloc(segment_size + 1, element_size);
+        assert(segment != NULL);
 
         /* get id */
         uint32_t id;
         if (mem.unmap_num_ele == 0)
         {
                 /*check mem array size*/
-                if (mem.mem_num_ele == mem.mem_length - 1) {
+                if (mem.mem_num_ele == mem.mem_length) {
                         uint32_t **new_mem_array = calloc(2 * mem.mem_length, sizeof(uint32_t *));
-                        free(mem.mem_array);
+                        assert(new_mem_array != NULL);
                         mem.mem_array = new_mem_array;
                         mem.mem_length *= 2;
+                        
+                        uint32_t size = mem.mem_length;
+                        for (uint32_t i = 0; i < size; i++) {
+                                new_mem_array[i] = mem.mem_array[i];
+                        }
+                        free(mem.mem_array);
+                        mem.mem_array = new_mem_array;
                 }
                 
                 id = mem.mem_num_ele - 1;
@@ -380,114 +378,106 @@ static inline uint32_t seg_new(A mem, uint32_t element_size, uint32_t segment_si
         }
 
         mem.mem_array[id] = segment;
+        segment[0] = segment_size;
         mem.mem_num_ele++;
         
         return id;
 }
 
 
-static inline uint32_t seg_at(T mem, uint32_t id, uint32_t offset)
+static inline uint32_t seg_at(A mem, uint32_t id, uint32_t offset)
 {
-        // assert(mem != NULL);
-        Seq_T wrapper_seq = mem->Segments_wrapper;
-        // assert(wrapper_seq != NULL);
-        UArray_T segment = Seq_get(wrapper_seq, id);
-        // assert(segment != NULL);
-
-        uint32_t instruction = *(uint32_t *)UArray_at(segment, offset);
-
+        assert(id < mem.mem_length);
+        //printf("given offset in seg_at is %u and stored segment length is %u\n", offset, mem.mem_array[id][0]);
+        assert(offset < mem.mem_array[id][0]);
+        uint32_t instruction = mem.mem_array[id][offset + 1];
+        //assert(instruction != NULL);
         return instruction;
 }
 
-
-static inline void seg_store(T mem, uint32_t id, uint32_t offset, uint32_t word)
+static inline void seg_store(A mem, uint32_t id, uint32_t offset, uint32_t word)
 {
-        // assert(mem != NULL);
-        Seq_T wrapper = mem->Segments_wrapper;
-        // assert(wrapper != NULL);
-        UArray_T segment = Seq_get(wrapper, id);
-        // assert(segment != NULL);
-
-        *(uint32_t *)UArray_at(segment, offset) = word;
+        assert(id < mem.mem_length);
+        assert(offset < mem.mem_array[id][0]);
+        mem.mem_array[id][offset + 1] = word;
 }
 
-
-static inline void seg_copy(T mem, uint32_t id)
+static inline void seg_copy(A mem, uint32_t id)
 {
-        // assert(mem != NULL);
+        assert(id < mem.mem_length);
 
         /* if ID is 0, directly return */
-        if (id == 0)
-        {
+        if (id == 0) {
                 return;
         }
+        
+        uint32_t *old_array = mem.mem_array[id];
+        assert(old_array != NULL);
 
-        UArray_T segment = Seq_get(mem->Segments_wrapper, id);
-        // assert(segment != NULL);
+        uint32_t length = mem.mem_array[id][0];
 
-        int length = UArray_length(segment);
-        UArray_T copied_segment = UArray_copy(segment, length);
+        uint32_t *new_array = calloc(length + 1, sizeof(uint32_t));
+        assert(new_array != NULL);
+        memcpy(new_array, old_array, (length + 1) * sizeof(uint32_t));
 
         /* free original segment 0 */
-        seg_free(mem, 0);
+        uint32_t *seg0 = mem.mem_array[0];
+        if (seg0 != NULL) {
+                free(seg0); 
+        }
 
         /* put in new segment 0 */
-        Seq_put(mem->Segments_wrapper, 0, copied_segment);
+        mem.mem_array[0] = new_array;
 }
 
-static inline void seg_free(T mem, uint32_t id)
+static inline void seg_free(A mem, uint32_t id)
 {
-        /* retrive specified segment by id */
-        // assert(mem != NULL);
-        Seq_T wrapper_seq = mem->Segments_wrapper;
-        Seq_T unmapped_seq = mem->Unmapped_ID;
-        // assert(wrapper_seq != NULL);
-        // assert(unmapped_seq != NULL);
+        assert(id < mem.mem_length);
 
-        UArray_T segment = Seq_put(wrapper_seq, id, NULL);
-
-        /* free segment array and recycle id */
-        if (segment != NULL)
-        {
-                UArray_free(&segment);
-                Seq_addhi(unmapped_seq, (void *)(uintptr_t)id);
+        uint32_t *segment = mem.mem_array[id];
+        mem.mem_array[id] = NULL;
+        if (segment != NULL) {
+                free(segment);
         }
-}
 
-static inline void free_memory(T mem)
-{
-        // assert(mem != NULL);
-
-        /* freeing sequence of segments */
-        if (mem->Segments_wrapper != NULL)
-        {
-                int size = Seq_length(mem->Segments_wrapper);
-                if (size != 0)
-                {
-                        for (int i = 0; i < size; i++)
-                        {
-                                if (Seq_get(mem->Segments_wrapper, i) != NULL)
-                                {
-                                        UArray_T temp_arr = Seq_get(
-                                            mem->Segments_wrapper, i);
-                                        if (temp_arr != NULL)
-                                        {
-                                                UArray_free(&temp_arr);
-                                        }
-                                }
-                        }
+        /* recycle id */
+        if (mem.unmap_num_ele == mem.unmap_length) {
+                uint32_t *new_unmap_array = calloc(2 * mem.unmap_length, sizeof(uint32_t));
+                assert(new_unmap_array != NULL);
+                mem.unmap_array = new_unmap_array;
+                mem.unmap_length *= 2;
+                
+                uint32_t size = mem.unmap_length;
+                for (uint32_t i = 0; i < size; i++) {
+                        new_unmap_array[i] = mem.unmap_array[i];
                 }
-                Seq_free(&mem->Segments_wrapper);
+                free(mem.unmap_array);
+                mem.unmap_array = new_unmap_array;
+        }
+        mem.unmap_array[mem.unmap_num_ele] = id;
+        mem.unmap_num_ele++;
+        mem.mem_num_ele--;
+}
+
+static inline void free_memory(A mem)
+{
+
+        /* freeing arrays of segments */
+        uint32_t size = mem.mem_length;
+        for (uint32_t i = 0; i < size; i++) {
+                uint32_t *segment = mem.mem_array[i];
+                if (segment != NULL) {
+                        free(segment);
+                }
         }
 
-        /* freeing sequence of unmapped id */
-        if (mem->Unmapped_ID != NULL)
-        {
-                Seq_free(&mem->Unmapped_ID);
+        /* freeing array of unmapped id */
+        if (mem.unmap_array != NULL) {
+                free(mem.unmap_array);
         }
 
-        /* freeing memory struct */
-        free(mem);
+        /* freeing memory array */
+        free(mem.mem_array);
 }
 
 
