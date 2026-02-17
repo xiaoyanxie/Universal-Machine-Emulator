@@ -43,6 +43,28 @@ make writetests
 ./um umbin/advent.umz < advent
 ```
 
+## 🚀 Performance Snapshot
+Measured on course lab environment:
+- OS: RHEL 8.10
+- Compiler: GCC 11.2.0
+- CPU: Intel i7-10700T @ 2.00GHz
+
+### Benchmark Runtime
+| Test Case | Execution Time |
+| --- | --- |
+| `midmark.um` | `0.34s` |
+| `advent` benchmark | `2.3s` |
+| `sandmark.umz` | `8.43s` |
+
+### Stress Test (Instruction Throughput)
+Historical stress-test result from the archived HW06 report:
+- `50,000,000` instructions in about `17s`
+- Throughput about `2.94 million instructions/second`
+
+Detailed reports:
+- `docs/performance-analysis.md`
+- `UniversialMachineEmulator/um/docs/performance-analysis.md`
+
 ## 📊 Profiling
 ```bash
 make profile-midmark
