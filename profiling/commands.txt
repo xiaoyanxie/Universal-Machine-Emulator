@@ -1,0 +1,23 @@
+# Profiling commands for the UM project
+
+# Timing
+/usr/bin/time ./um umbin/midmark.um > /dev/null
+/usr/bin/time ./um umbin/sandmark.umz > /dev/null
+/usr/bin/time ./um umbin/advent.umz < advent > /dev/null
+
+# Callgrind (write output into profiling/callgrind)
+valgrind --tool=callgrind --dump-instr=yes \
+  --callgrind-out-file=profiling/callgrind/midmark.out \
+  ./um umbin/midmark.um > /dev/null
+
+valgrind --tool=callgrind --dump-instr=yes \
+  --callgrind-out-file=profiling/callgrind/sandmark.out \
+  ./um umbin/sandmark.umz > /dev/null
+
+valgrind --tool=callgrind --dump-instr=yes \
+  --callgrind-out-file=profiling/callgrind/advent.out \
+  ./um umbin/advent.umz < advent > /dev/null
+
+# View latest profile
+ls -lt profiling/callgrind/*.out
+qcachegrind profiling/callgrind/midmark.out

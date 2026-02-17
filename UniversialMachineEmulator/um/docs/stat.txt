@@ -1,0 +1,49 @@
+     In addition to the errors returned by the stat() and lstat(), fstatat() may
+     fail if:
+
+     [EBADF]            The path argument does not specify an absolute path and
+                        the fd argument is neither AT_FDCWD nor a valid file
+                        descriptor open for searching.
+
+     [EINVAL]           The value of the flag argument is not valid.
+
+     [ENOTDIR]          The path argument is not an absolute path and fd is
+                        neither AT_FDCWD nor a file descriptor associated with a
+                        directory.
+
+CAVEATS
+     The file generation number, st_gen, is only available to the super-user.
+     The fields in the stat structure currently marked st_spare1, st_spare2, and
+     st_spare3 are present in preparation for inode time stamps expanding to 64
+     bits.  This, however, can break certain programs that depend on the time
+     stamps being contiguous (in calls to utimes(2)).
+
+TRANSITIONAL DESCRIPTION (NOW DEPRECATED)
+     The fstat64, lstat64 and stat64 routines are equivalent to their
+     corresponding non-64-suffixed routine, when 64-bit inodes are in effect.
+     They were added before there was support for the symbol variants, and so are
+     now deprecated.  Instead of using these, set the _DARWIN_USE_64_BIT_INODE
+     macro before including header files to force 64-bit inode support.
+
+     The stat64 structure used by these deprecated routines is the same as the
+     stat structure when 64-bit inodes are in effect (see above).
+
+SEE ALSO
+     chflags(2), chmod(2), chown(2), statfs(2), utimes(2), compat(5), symlink(7)
+
+BUGS
+     Applying fstat() to a socket (and thus to a pipe) returns a zero'd buffer,
+     except for the blocksize field, and a unique device and inode number.
+
+STANDARDS
+     The stat() and fstat() function calls are expected to conform to IEEE Std
+     1003.1-1988 (“POSIX.1”).  The fstatat() system call is expected to conform to
+     POSIX.1-2008 .
+
+HISTORY
+     An lstat() function call appeared in 4.2BSD.  The stat64(), fstat64(), and
+     lstat64() system calls first appeared in Mac OS X 10.5 (Leopard) and are now
+     deprecated in favor of the corresponding symbol variants.  The fstatat()
+     system call appeared in OS X 10.10
+
+macOS 13.4                         May 15, 2008                         macOS 13.4

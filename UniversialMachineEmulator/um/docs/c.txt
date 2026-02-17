@@ -1,0 +1,216 @@
+0x400c04 <frame_dummy+4>   jmp   0x400b90 <register_tm_clones>
+0x400c0a <main>            sub   $0x8,%rsp
+0x400c0d <main+3>          cmp   $0x2,%edi
+0x400c0f <main+5>          je    0x400c34 <main+46>
+0x400c11 <main+7>          mov   0x2024ea(%rip),%rcx        # 0x603110
+0x400c16 <main+12>         mov   $0x1e,%edx
+0x400c1b <main+17>         mov   $0x1,%esi
+0x400c20 <main+22>         mov   $0x402510,%edi
+0x400c25 <main+27>         callq 0x400b00 <fwrite@plt>
+0x400c2a <main+32>         mov   $0x1,%eax
+0x400c2f <main+37>         add   $0x8,%rsp
+0x400c33 <main+41>         retq
+0x400c34 <main+42>         mov   0x8(%rsi),%rdi
+0x400c38 <main+46>         callq 0x400f9e <Um_load>
+0x400c3d <main+51>         mov   %rax,%rdi
+0x400c3e <main+52>         callq 0x400c7b <Um_run>
+0x400c43 <main+57>         mov   $0x402530,%edi
+0x400c48 <main+62>         callq 0x400a00 <getenv@plt>
+0x400c4d <main+67>         mov   %rax,%rdx
+0x400c50 <main+70>         mov   $0x0,%eax
+0x400c55 <main+75>         test  %rdx,%rdx
+0x400c58 <main+78>         je    0x400c2f <main+41>
+0x400c5c <main+82>         mov   0x2024ad(%rip),%rdx        # 0x603111
+0x400c63 <main+89>         mov   $0x40253a,%esi
+0x400c68 <main+94>         mov   0x202491(%rip),%rdi        # 0x603110
+0x400c6f <main+101>        callq 0x400a60 <fprintf@plt>
+0x400c74 <main+106>        mov   $0x0,%eax
+0x400c79 <main+111>        jmp   0x400c2f <main+41>
+0x400c7b <Um_run>          push  %r14
+0x400c7d <Um_run+2>        push  %r13
+0x400c7f <Um_run+4>        push  %r12
+0x400c81 <Um_run+6>        push  %rbp
+0x400c82 <Um_run+7>        push  %rbx
+0x400c83 <Um_run+8>        sub   $0x30,%rsp
+0x400c87 <Um_run+12>       mov   %rdi,%r13
+0x400c8a <Um_run+15>       callq 0x40120c <Umsegment_newmap>
+0x400c8f <Um_run+20>       mov   %rax,0x28(%rsp)
+0x400c94 <Um_run+25>       movq  $0x0,(%rsp)
+0x400c9c <Um_run+33>       movq  $0x0,0x8(%rsp)
+0x400ca5 <Um_run+42>       movq  $0x0,0x10(%rsp)
+0x400cae <Um_run+51>       movq  $0x0,0x18(%rsp)
+0x400cb7 <Um_run+60>       mov   %r13,%rax
+0x400cbf <Um_run+68>       mov   $0x0,%ebp
+0x400cc1 <Um_run+70>       jmp   0x400d11 <Um_run+150>
+0x400cc6 <Um_run+75>       mov   %ebx,%edx
+0x400cc9 <Um_run+78>       and   $0x7,%edx
+0x400ccc <Um_run+81>       mov   %r12,%rax
+0x400ccf <Um_run+84>       cmpl  $0x0,(%rsp,%rdx,4)
+0x400cd3 <Um_run+88>       je    0x400d11 <Um_run+150>
+0x400cd5 <Um_run+90>       mov   %ebx,%eax
+0x400cd7 <Um_run+92>       shr   $0x3,%eax
+0x400cda <Um_run+95>       and   $0x7,%eax
+0x400cdd <Um_run+98>       mov   (%rsp,%rax,4),%eax
+0x400ce0 <Um_run+101>      shr   $0x6,%ebx
+0x400ce3 <Um_run+104>      and   $0x7,%ebx
+0x400ce6 <Um_run+107>      mov   (%rsp,%rbx,4),%esi
+0x400ce9 <Um_run+110>      mov   %r13,%rax
+0x400cec <Um_run+113>      test  %rsi,%rsi
+0x400cee <Um_run+115>      jne   0x400d35 <Um_run+186>
+0x400cf0 <Um_run+117>      mov   %ebx,%edx
+0x400cf2 <Um_run+119>      shr   $0x6,%edx
+0x400cf5 <Um_run+122>      and   $0x7,%edx
+0x400cf8 <Um_run+125>      mov   (%rsp,%rdx,4),%ecx
+0x400cfb <Um_run+128>      mov   (%rax,%rcx,4),%eax
+0x400cfe <Um_run+131>      mov   %eax,(%rsp,%rbx,4)
+0x400d01 <Um_run+134>      mov   %r12,%rax
+0x400d04 <Um_run+137>      add   $0x1,%rbp
+0x400d08 <Um_run+141>      mov   %ebx,%eax
+0x400d0a <Um_run+143>      shr   $0x3,%eax
+0x400d0d <Um_run+146>      and   $0x7,%eax
+0x400d11 <Um_run+150>      lea   0x4(%rax),%r12
+0x400d15 <Um_run+154>      mov   (%rax),%ebx
+0x400d17 <Um_run+156>      add   $0x1,%rbp
+0x400d1b <Um_run+160>      mov   %ebx,%eax
+0x400d1d <Um_run+162>      shr   $0x1c,%eax
+0x400d20 <Um_run+165>      and   $0xdfffffff,%ebx
+0x400d26 <Um_run+171>      ja    0x400f82 <Um_run+775>
+0x400d2c <Um_run+177>      mov   %eax,%eax
+0x400d2e <Um_run+179>      jmpq  *0x402560(,%rax,8)
+0x400d35 <Um_run+186>      mov   0x28(%rsp),%rdi
+0x400d3a <Um_run+191>      callq 0x401403 <Umsegment_of_id>
+0x400d3f <Um_run+196>      jmp   0x400cfa <Um_run+127>
+0x400d41 <Um_run+198>      mov   %ebx,%r14d
+0x400d44 <Um_run+201>      and   $0x7,%r14d
+0x400d48 <Um_run+205>      mov   %ebx,%eax
+0x400d4a <Um_run+207>      shr   $0x6,%eax
+0x400d4d <Um_run+210>      and   $0x7,%eax
+0x400d50 <Um_run+213>      mov   (%rsp,%rax,4),%esi
+0x400d53 <Um_run+216>      mov   %r13,%rax
+0x400d56 <Um_run+219>      test  %esi,%esi
+0x400d58 <Um_run+221>      jne   0x400d72 <Um_run+247>
+0x400d5a <Um_run+223>      mov   $0x3,%ebx
+0x400d5d <Um_run+226>      and   $0x7,%ebx
+0x400d60 <Um_run+229>      mov   (%rsp,%rbx,4),%edx
+0x400d63 <Um_run+232>      mov   %r14d,%r14d
+0x400d66 <Um_run+235>      mov   (%rsp,%r14,4),%ecx
+0x400d69 <Um_run+238>      mov   %ecx,(%rax,%rdx,4)
+0x400d6c <Um_run+241>      mov   %r12,%rax
+0x400d6f <Um_run+244>      jmp   0x400d11 <Um_run+150>
+0x400d72 <Um_run+247>      mov   0x28(%rsp),%rdi
+0x400d77 <Um_run+252>      callq 0x401403 <Umsegment_inactivate>
+0x400d7c <Um_run+257>      jmp   0x400d5a <Um_run+223>
+0x400d81 <Um_run+261>      mov   %ebx,%eax
+0x400d83 <Um_run+263>      shr   $0x6,%eax
+0x400d86 <Um_run+266>      and   $0x7,%ebx
+0x400d89 <Um_run+269>      mov   (%rsp,%rbx,4),%edx
+0x400d8c <Um_run+272>      mov   %rsp,%rax
+0x400d8f <Um_run+275>      imul  (%rsp,%rcx,4),%edx
+0x400d92 <Um_run+278>      mov   %edx,(%rsp,%rax,4)
+0x400d94 <Um_run+281>      add   (%rsp,%rcx,4),%edx
+0x400d97 <Um_run+284>      mov   %edx,(%rsp,%rax,4)
+0x400d9a <Um_run+287>      jmpq  0x400d11 <Um_run+150>
+0x400da2 <Um_run+295>      mov   %ebx,%eax
+0x400da4 <Um_run+297>      shr   $0x6,%eax
+0x400da7 <Um_run+300>      and   $0x7,%eax
+0x400daa <Um_run+303>      mov   (%rsp,%rbx,4),%eax
+0x400dad <Um_run+306>      shr   $0x3,%edx
+0x400db0 <Um_run+309>      and   $0x7,%ebx
+0x400db3 <Um_run+312>      mov   (%rsp,%rbx,4),%ecx
+0x400db6 <Um_run+315>      mov   (%rsp,%rcx,4),%ecx
+0x400db9 <Um_run+318>      mov   %edx,(%rsp,%rax,4)
+0x400dbc <Um_run+321>      mov   %r12,%rax
+0x400dbf <Um_run+324>      jmpq  0x400d11 <Um_run+150>
+0x400dc2 <Um_run+327>      mov   %ebx,%ecx
+0x400dc5 <Um_run+330>      shr   $0x6,%ecx
+0x400dc8 <Um_run+333>      and   $0x7,%ecx
+0x400dcb <Um_run+336>      mov   (%rsp,%rcx,4),%edx
+0x400dce <Um_run+339>      shr   $0x3,%eax
+0x400dd1 <Um_run+342>      and   $0x7,%eax
+0x400dd4 <Um_run+345>      mov   (%rsp,%eax,4),%eax
+0x400dd7 <Um_run+348>      shr   $0x6,%eax
+0x400dda <Um_run+351>      and   $0x7,%eax
+0x400ddd <Um_run+354>      mov   (%rsp,%rax,4),%eax
+0x400de0 <Um_run+357>      shr   $0x3,%eax
+0x400de3 <Um_run+360>      and   $0x7,%eax
+0x400de6 <Um_run+363>      mov   (%rsp,%rax,4),%eax
+0x400de9 <Um_run+366>      mov   %eax,(%rsp,%rdx,4)
+0x400dec <Um_run+369>      mov   %r12,%rax
+0x400def <Um_run+372>      jmpq  0x400d11 <Um_run+150>
+0x400df2 <Um_run+375>      mov   %ebx,%eax
+0x400df5 <Um_run+378>      shr   $0x6,%eax
+0x400df8 <Um_run+381>      and   $0x7,%eax
+0x400dfb <Um_run+384>      mov   (%rsp,%eax,4),%eax
+0x400dfe <Um_run+387>      shr   $0x3,%eax
+0x400e01 <Um_run+390>      and   $0x7,%eax
+0x400e04 <Um_run+393>      mov   (%rsp,%eax,4),%eax
+0x400e07 <Um_run+396>      not   %eax
+0x400e0a <Um_run+399>      mov   %eax,(%rsp,%rdx,4)
+0x400e0d <Um_run+402>      mov   %r12,%rax
+0x400e10 <Um_run+405>      jmpq  0x400d11 <Um_run+150>
+0x400e15 <Um_run+410>      lea   0x28(%rsp),%rdi
+0x400e1a <Um_run+415>      callq 0x40126d <Umsegment_freemap>
+0x400e1f <Um_run+420>      lea   -0x4(%r13),%rdi
+0x400e23 <Um_run+423>      callq 0x400a10 <free@plt>
+0x400e28 <Um_run+428>      add   $0x30,%rsp
+0x400e2c <Um_run+432>      pop   %rbx
+0x400e2d <Um_run+433>      pop   %rbp
+0x400e2e <Um_run+434>      pop   %r12
+0x400e30 <Um_run+436>      pop   %r13
+0x400e32 <Um_run+438>      pop   %r14
+0x400e34 <Um_run+440>      retq
+0x400e35 <Um_run+441>      mov   %ebx,%eax
+0x400e37 <Um_run+443>      and   $0x7,%eax
+0x400e3a <Um_run+446>      mov   (%rsp,%rax,4),%esi
+0x400e3d <Um_run+449>      mov   0x28(%rsp),%rdi
+0x400e42 <Um_run+454>      callq 0x401306 <Umsegment_new>
+0x400e47 <Um_run+459>      mov   %r12,%rax
+0x400e4a <Um_run+463>      jmp   0x400d11 <Um_run+150>
+0x400e4c <Um_run+465>      mov   %ebx,%eax
+0x400e4e <Um_run+467>      and   $0x7,%eax
+0x400e51 <Um_run+470>      mov   (%rsp,%rax,4),%eax
+0x400e54 <Um_run+473>      mov   %eax,%r14d
+0x400e57 <Um_run+476>      shr   $0x6,%eax
+0x400e5a <Um_run+479>      and   $0x7,%eax
+0x400e5d <Um_run+482>      mov   (%rsp,%rax,4),%eax
+0x400e60 <Um_run+485>      shr   $0x3,%eax
+0x400e63 <Um_run+488>      and   $0x7,%eax
+0x400e66 <Um_run+491>      mov   (%rsp,%eax,4),%eax
+0x400e69 <Um_run+494>      mov   %r14d,(%rsp,%rdx,4)
+0x400e6d <Um_run+497>      mov   %r12,%rax
+0x400e70 <Um_run+500>      jmpq  0x400d11 <Um_run+150>
+0x4013d5 <Umsegment_new+207>    lea   -0x1(%rbp),%esi
+0x4013d8 <Umsegment_new+210>    lea   0x1(%rcx,%rsi,1),%rcx
+0x4013dd <Umsegment_new+215>    lea   (%rax,%rcx,8),%rax
+0x4013e1 <Umsegment_new+219>    movq  $0x0,(%rdx)
+0x4013e8 <Umsegment_new+226>    add   $0x8,%rdx
+0x4013ec <Umsegment_new+230>    cmp   %rax,%rdx
+0x4013ef <Umsegment_new+233>    jne   0x4013e1 <Umsegment_new+219>
+0x4013f1 <Umsegment_new+235>    mov   0x10(%r12),%ebp
+0x4013f6 <Umsegment_new+240>    lea   0x1(%rbp),%eax
+0x4013f9 <Umsegment_new+243>    mov   %eax,0x10(%r12)
+0x4013fe <Umsegment_new+248>    jmpq  0x401338 <Umsegment_new+50>
+0x401403 <Umsegment_of_id>      mov   %esi,%esi
+0x401405 <Umsegment_of_id+2>    mov   0x8(%rdi),%rax
+0x401409 <Umsegment_of_id+6>    mov   (%rax,%rsi,8),%rax
+0x40140d <Umsegment_of_id+10>   retq
+0x40140e <Umsegment_inactivate> push  %rbp
+0x40140f <Umsegment_inactivate+1> push  %rbx
+0x401410 <Umsegment_inactivate+2> sub   $0x8,%rsp
+0x401414 <Umsegment_inactivate+6> mov   %rdi,%rbp
+0x401417 <Umsegment_inactivate+9> mov   %esi,%ebx
+0x401419 <Umsegment_inactivate+11> mov  0x8(%rdi),%rax
+0x40141c <Umsegment_inactivate+15> subq $0x4,(%rax,%rbx,8)
+0x401422 <Umsegment_inactivate+20> mov   0x8(%rdi),%rax
+0x401426 <Umsegment_inactivate+24> mov   (%rax,%rbx,8),%rdi
+0x40142a <Umsegment_inactivate+28> mov   $0xf,%edx
+0x40142f <Umsegment_inactivate+33> mov   $0x4025dd,%esi
+0x401434 <Umsegment_inactivate+38> callq 0x401773 <Mem_free>
+0x401439 <Umsegment_inactivate+43> mov   0x8(%rbp),%rax
+0x40143d <Umsegment_inactivate+47> movq  $0x0,(%rax,%rbx,8)
+0x401442 <Umsegment_inactivate+52> mov   0x18(%rbp),%rdi
+0x401449 <Umsegment_inactivate+59> mov   %rbx,%rsi
+0x40144c <Umsegment_inactivate+62> callq 0x401edc <Seq_addlo>
+0x401451 <Umsegment_inactivate+67> add   $0x8,%rsp
+0x401455 <Umsegment_inactivate+71> pop   %rbx
+0x401457 <Umsegment_inactivate+73> retq

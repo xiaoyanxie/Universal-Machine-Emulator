@@ -1,0 +1,12 @@
+test_halt.um            
+test_add-halt.um       
+test_addition.um 
+test_division.um        
+test_multiplication.um   
+test_nand.um
+test_input.um             
+test_conditional_move.um 
+test_map.um
+test_segload_store.um
+test_segload_large.um     
+        
