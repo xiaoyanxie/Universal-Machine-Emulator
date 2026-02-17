@@ -1,28 +1,32 @@
-# Universal Machine Emulator (Imported Folder)
+# Universal Machine Emulator (Imported Snapshot) 🧸
 
-This directory is a reorganized UM project snapshot. It keeps source files at the top level and moves generated/auxiliary artifacts into focused folders.
+[![Language C](https://img.shields.io/badge/language-C-00599C?logo=c&logoColor=white)](#)
+[![License MIT](https://img.shields.io/badge/license-MIT-2ea44f)](LICENSE)
+[![Snapshot](https://img.shields.io/badge/folder-imported%20snapshot-f4a460)](#)
 
-## Layout
-- `bitpack.c`, `driver.c`, `instructions.c`, `memory.c`, `test.c`: Core source files.
-- `bitpack.h`, `instructions.h`, `memory.h`, `um-dis.h`, `um-opcode.h`: Headers.
-- `Makefile`: Build script for this snapshot.
-- `docs/`: Design, notes, and performance analysis.
-- `tests/`: Test inventory and generated test artifacts.
-- `outputs/`: Collected output files.
-- `artifacts/`: Built binaries and static libraries.
-- `data/`: Additional binary/input data files.
-- `benchmarks/`: Benchmark UM binaries and stdin input.
-- `profiling/`: Profiling benchmark bundle and profiling notes.
-- `submission/`: Original submission snapshot preserved as-is.
+This directory is a reorganized UM project snapshot. Source stays near the top-level, and generated artifacts are grouped into focused folders.
 
-## Build
+## 🗂️ Layout
+- `bitpack.c`, `driver.c`, `instructions.c`, `memory.c`, `test.c`: Core source files
+- `bitpack.h`, `instructions.h`, `memory.h`, `um-dis.h`, `um-opcode.h`: Headers
+- `Makefile`: Build script for this snapshot
+- `docs/`: Design, notes, and performance analysis
+- `tests/`: Test inventory and generated test artifacts
+- `outputs/`: Collected output files
+- `artifacts/`: Built binaries and static libraries
+- `data/`: Additional binary/input data files
+- `benchmarks/`: Benchmark UM binaries and stdin input
+- `profiling/`: Pointer note to canonical root-level profiling assets
+- `submission/`: Original submission snapshot preserved as-is
+
+## 🛠️ Build
 ```bash
 make
 ```
 
-If your environment has COMP 40 libraries configured in the include/lib paths from `Makefile`, this builds the emulator executable.
+If your environment has COMP 40 libraries configured in the include/lib paths from `Makefile`, this builds `artifacts/bin/um`.
 
-## Run
+## ▶️ Run
 ```bash
 ./artifacts/bin/um benchmarks/umbin/hello.um
 ./artifacts/bin/um benchmarks/umbin/midmark.um
@@ -30,10 +34,10 @@ If your environment has COMP 40 libraries configured in the include/lib paths fr
 ./artifacts/bin/um benchmarks/umbin/advent.umz < benchmarks/advent.in
 ```
 
-## Notes
-- The original class-style README has been moved to `docs/performance-analysis.md`.
-- Generated test files are in `tests/generated/`.
-- Existing built outputs were moved to `artifacts/` for cleanliness.
+## 📝 Notes
+- Original class README: `docs/performance-analysis.md`
+- Generated test files: `tests/generated/`
+- Canonical profiling artifacts: repository root `profiling/`
 
-## License
-This snapshot includes an MIT `LICENSE` file.
+## 📄 License
+MIT License in `LICENSE`.

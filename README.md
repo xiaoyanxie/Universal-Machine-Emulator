@@ -1,38 +1,41 @@
-# Universal Machine Emulator
+# Universal Machine Emulator 🤖
 
-A C implementation of the COMP 40 Universal Machine (UM) with benchmark programs, profiling artifacts, and unit-test generators.
+[![Language C](https://img.shields.io/badge/language-C-00599C?logo=c&logoColor=white)](#)
+[![License MIT](https://img.shields.io/badge/license-MIT-2ea44f)](LICENSE)
+[![Project Type](https://img.shields.io/badge/type-UM%20emulator-ff69b4)](#)
 
-## What Is Included
-- UM emulator implementation in C (`driver.c`, `instructions.c`, `memory.c`, `bitpack.c`).
-- Official UM benchmark/program binaries in `umbin/`.
-- Profiling workflow and historical profiling outputs in `profiling/`.
-- UM test inventory and guidance in `tests/`.
+A C implementation of the COMP 40 Universal Machine (UM) with benchmarks, profiling artifacts, and unit-test generators.
 
-## Repository Layout
-- `driver.c`, `instructions.c`, `memory.c`, `bitpack.c`: Core emulator implementation.
-- `instructions.h`, `memory.h`, `bitpack.h`: Public interfaces.
-- `umbin/`: UM binaries (`.um`/`.umz`) and benchmark assets.
-- `profiling/`: Callgrind outputs, charts, and profiling notes.
-- `tests/`: UM test inventory and test-generation notes.
-- `docs/`: Performance analysis notes and UM file catalog.
+## ✨ What's Inside
+- UM emulator implementation in C (`driver.c`, `instructions.c`, `memory.c`, `bitpack.c`)
+- Official UM benchmark/program binaries in `umbin/`
+- Profiling workflow and historical outputs in `profiling/`
+- UM test inventory and guidance in `tests/`
 
-## Build
+## 🗂️ Repository Layout
+- `driver.c`, `instructions.c`, `memory.c`, `bitpack.c`: Core emulator
+- `instructions.h`, `memory.h`, `bitpack.h`: Public interfaces
+- `umbin/`: UM binaries (`.um`/`.umz`) and benchmark assets
+- `profiling/`: Callgrind outputs, charts, and profiling notes
+- `tests/`: UM test inventory and test-generation notes
+- `docs/`: Performance analysis notes and UM file catalog
+
+## 🛠️ Build
 Prerequisites:
 - `gcc`
-- COMP 40 support libraries (`cii40`, `bitpack`, `40locality`) available in the include/lib paths used by the `Makefile`
+- COMP 40 support libraries (`cii40`, `bitpack`, `40locality`) in the paths used by `Makefile`
 
-Build the emulator:
+Build emulator:
 ```bash
 make
 ```
 
-Optional test generator build:
+Optional test generator:
 ```bash
 make writetests
 ```
 
-## Run
-Examples:
+## ▶️ Run
 ```bash
 ./um umbin/hello.um
 ./um umbin/midmark.um
@@ -40,32 +43,29 @@ Examples:
 ./um umbin/advent.umz < advent
 ```
 
-## Profiling
-Use one of the following:
+## 📊 Profiling
 ```bash
 make profile-midmark
 make profile-sandmark
 make profile-advent
 ```
 
-Or run the helper directly:
+Or:
 ```bash
 ./profiling/run_callgrind.sh umbin/midmark.um midmark
 ./profiling/run_callgrind.sh umbin/advent.umz advent advent
 ```
 
-Detailed notes are in `profiling/README.md`.
+More details: `profiling/README.md`
 
-## UM-Related Files
-- UM binaries and benchmarks: `umbin/`
-- UM test name inventory: `tests/UMTESTS.txt`
-- Generated UM test artifact directory: `tests/generated/`
+## 🧪 UM Test Files
+- Test name inventory: `tests/UMTESTS.txt`
+- Generated test artifact directory: `tests/generated/`
 - Test generator sources: `umlab.c`, `umlabwrite.c`
-- Catalog of UM files: `docs/UM_FILES.md`
+- Full file catalog: `docs/UM_FILES.md`
 
-## Performance Analysis
-The original class report-style README was preserved at:
+## 📝 Performance Analysis
 - `docs/performance-analysis.md`
 
-## License
-This project is licensed under the MIT License. See `LICENSE`.
+## 📄 License
+MIT License in `LICENSE`.

@@ -1,11 +1,12 @@
-# Profiling Bundle
+# Profiling Note
 
-This folder contains a profiling benchmark bundle for the UM emulator.
+Profiling assets are maintained at the repository root:
+- `profiling/`
 
-## Structure
-- `profiling/benchmarks/`: Benchmark binaries used during profiling-oriented runs.
+This local folder is kept only as a pointer to avoid duplicated profiling data
+inside `UniversialMachineEmulator/um/`.
 
-## Typical run
+To run a benchmark in this imported snapshot:
 ```bash
 ./artifacts/bin/um benchmarks/umbin/midmark.um > /dev/null
 ```
