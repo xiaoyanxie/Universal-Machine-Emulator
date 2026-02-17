@@ -2,7 +2,7 @@
 *  
 *     Program:    UM
 *     Assignment: CS 40 HW06 - UM
-*     Authors:    Xiaoyan Xie(xxie05) and Rene Zhao (nzhao05)
+*     Authors:    Xiaoyan and Rene
 *     Date:       11/18/2024
 *     Summary:    UM is an emulator which interprets and executes a 
 *                 sequence of instructions encoded in a 32-bit binary format. 
