@@ -1,10 +1,14 @@
 # Universal Machine Emulator (Imported Snapshot) 🧸
 
 [![Language C](https://img.shields.io/badge/language-C-00599C?logo=c&logoColor=white)](#)
-[![License MIT](https://img.shields.io/badge/license-MIT-2ea44f)](LICENSE)
+[![Usage](https://img.shields.io/badge/usage-reference%20only-orange)](#)
 [![Snapshot](https://img.shields.io/badge/folder-imported%20snapshot-f4a460)](#)
 
 This directory is a reorganized UM project snapshot. Source stays near the top-level, and generated artifacts are grouped into focused folders.
+
+## ⚠️ Academic Integrity Notice
+This repository is for portfolio and learning reference only.
+Do not copy, submit, or adapt this code for coursework or academic evaluation.
 
 ## 🗂️ Layout
 - `bitpack.c`, `driver.c`, `instructions.c`, `memory.c`, `test.c`: Core source files
@@ -39,5 +43,6 @@ If your environment has COMP 40 libraries configured in the include/lib paths fr
 - Generated test files: `tests/generated/`
 - Canonical profiling artifacts: repository root `profiling/`
 
-## 📄 License
-MIT License in `LICENSE`.
+## 📄 Usage Terms
+No open-source license is granted for reuse in coursework submissions.
+All rights reserved unless explicit permission is provided by the author.

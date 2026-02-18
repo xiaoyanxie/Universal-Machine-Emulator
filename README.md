@@ -1,10 +1,14 @@
 # Universal Machine Emulator 🤖
 
 [![Language C](https://img.shields.io/badge/language-C-00599C?logo=c&logoColor=white)](#)
-[![License MIT](https://img.shields.io/badge/license-MIT-2ea44f)](LICENSE)
+[![Usage](https://img.shields.io/badge/usage-reference%20only-orange)](#)
 [![Project Type](https://img.shields.io/badge/type-UM%20emulator-ff69b4)](#)
 
 A C implementation of the COMP 40 Universal Machine (UM) with benchmarks, profiling artifacts, and unit-test generators.
+
+## ⚠️ Academic Integrity Notice
+This repository is for portfolio and learning reference only.
+Do not copy, submit, or adapt this code for coursework or academic evaluation.
 
 ## ✨ What's Inside
 - UM emulator implementation in C (`driver.c`, `instructions.c`, `memory.c`, `bitpack.c`)
@@ -89,5 +93,6 @@ More details: `profiling/README.md`
 ## 📝 Performance Analysis
 - `docs/performance-analysis.md`
 
-## 📄 License
-MIT License in `LICENSE`.
+## 📄 Usage Terms
+No open-source license is granted for reuse in coursework submissions.
+All rights reserved unless explicit permission is provided by the author.
